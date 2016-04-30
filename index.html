@@ -12,6 +12,28 @@
     <link rel="stylesheet" href="css/wiki.css">
   </head>
   <body>
+    <div id="div1"class="container-fluid">
+      <div class="row text-center">
+        <div class="col-xs-6">
+          <canvas id="book" width="300" height="400"></canvas>
+        </div>
+      </div>
+      <div class="row text-center">
+        <div class="col-xs-6 search">
+          <label id="search-label" for="search-box">Search Wikipedia</label>
+          <input type="text" 
+                 class="form-control form-control-lg text-center"
+                 id="search-box"
+                 placeholder="Search for..."
+                 required><br>
+          <button type="submit" class="btn btn-secondary">Enter</button>
+        </div>
+      </div>
+      <div class="row text-center">
+        <div class="col-xs-6 results">
+        </div>
+      </div>
+    </div>
   </body>
 </html>
     

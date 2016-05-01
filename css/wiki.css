@@ -1,22 +1,40 @@
 .search
 {
-  position: fixed;
+  /*position: fixed;
   top: 30px;
   right: 0;
   left: 0;
   margin-left: auto;
-  margin-right: auto;
+  margin-right: auto;*/
   display: none;
+}
+
+#indicate
+{
+  font-size: 1.5em; 
+}
+
+#book-pic
+{
+  margin-right: auto;
+  margin-left: auto;
+}
+
+img:hover
+{
+  transform: scale(1.025);
 }
 
 #book
 {
-  position: fixed;
+  /*position: fixed;
   top: 30px;
   right: 0;
   left: 0;
   margin-left: auto;
-  margin-right: auto;
-
+  margin-right: auto;*/
+  visibility: visible;
 }
+
+
 

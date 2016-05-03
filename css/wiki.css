@@ -9,6 +9,11 @@
   display: none;
 }
 
+#guide
+{
+  visibility: visible;
+}
+
 #indicate
 {
   font-size: 1.5em; 

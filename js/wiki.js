@@ -187,6 +187,9 @@ function buildWikiResult(title, snippet)
   // makes the links open in new page
   newAnchor.setAttribute("target", "_blank");
 
+  // adds a bootstrap class
+  newAnchor.setAttribute("class", "list-group-item");
+
   // build the <a> link with all nested content
   newAnchor.appendChild(newHeader);
   newAnchor.appendChild(newPara);

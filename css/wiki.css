@@ -46,3 +46,41 @@ img:hover
   margin-bottom: 2em;
 }
 
+#timpic
+{
+  display: none;
+  border-radius: 30px;
+  box-shadow: 0px 0px 19px black;
+}
+
+#about
+{
+  display: none; 
+  font-size: 14px;
+}
+
+#projects
+{
+  display: none;
+}
+
+.fa-external-link
+{
+  margin-left: 3px;
+}
+
+#projects > a
+{
+  font-size: 14px;
+}
+
+.foot-pro
+{
+  font-size: 1.5em;
+}
+
+a:hover
+{
+  text-decoration: none; 
+}
+

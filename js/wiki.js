@@ -16,44 +16,36 @@ $(document).ready(function() {
     source: hitchTerms,
     select: function (event, ui) {
       console.log(ui.item.value);
-      vals = ui.item.value;
+      nvalue = ui.item.value;
       
     }
   });
 
-  
+ 
   $("button").click(function() {
-    console.log("nvalue on buttton: " + nvalue);
-  });
-
-  console.log(vals);
-  /*$("#search-box").bind("keydown", function(event) {
-    if (event.keyCode === $.ui.keyCode.TAB &&
-        $(this).autocomplete("instance").menu.active)
+    var guideNode = document.getElementById("guide"); 
+    if (guideNode && guideNode.parentNode)
     {
-      event.preventDefault();
+      guideNode.parentNode.removeChild(guideNode);    
     }
-  }).autocomplete({
-      minLength: 2,
-      source: function(request, response) {
-        response($.ui.autocomplete.filter(
-          hitchTerms, extractLast(request.term)));
-      },
-      focus: function() {
-        return false;
-      },
-      select: function(event, ui) {
-        var terms = split(this.value);
-        terms.pop();
-        terms.push(ui.item.value);
-        terms.push("");
-        this.value = terms.join(""); 
-        return false;
-      }
-    });*/
-
-
-    /*$.ajax( {
+  
+    var resultsNode = document.getElementById("results");
+    while(resultsNode.firstChild)
+    {
+      resultsNode.removeChild(resultsNode.firstChild);
+    }
+    
+    if (nvalue == "")
+    {
+      window.location.href = 'https://en.wikipedia.org/wiki/Special:Random';
+    }
+    else
+    {
+      nvalue = nvalue.trim();
+      nvalue = nvalue.replace(/[^\w\s()]/gi, '');
+    }
+    console.log("nvalue on buttton: " + nvalue);
+    $.ajax( {
       url: "https://en.wikipedia.org/w/api.php",
       jsonp: "callback",
       dataType: 'jsonp',
@@ -61,15 +53,39 @@ $(document).ready(function() {
         action: "query",
         format: "json",
         list:   "search",
-        srsearch:"dogs",
+        srsearch: nvalue,
+        srlimit: "5",
         srnamespace: "0",
         srprop:  "snippet" 
       },
       xhrFields: { withCredentials: true},
       success: function(response) {
-        $(".results").html(JSON.stringify(response));
+        //$(".results").html(JSON.stringify(response));
+        var wjarr = response["query"]["search"];
+        var wikiTitle;
+        var wikiSnippet;
+        wjarr.forEach(function(val) {
+          var keys = Object.keys(val);
+          keys.forEach(function(key) {
+            if (key == "title")
+            {
+              //console.log(val[key] + "\n"); 
+              wikiTitle = val[key];
+            }
+            else if (key == "snippet")
+            {
+              //console.log(val[key] + "\n");
+              wikiSnippet = val[key];
+            }
+          });
+          
+          buildWikiResult(wikiTitle, wikiSnippet);
+});
       }
-    });*/
+    });
+  });
+
+
 
   
 });
@@ -86,7 +102,8 @@ function hitchhikerArray()
           "infinite probability drive", "jatravartids",
           "jeltz, prostetnic vogon", "marvin", "mcmillan, tricia",
           "old thrashbarg", "old pink dog bar", 
-          "pan galactic gargle blaster", "perfectly normal beast",
+          "pan galactic gargle blaster", "paranoid android",
+          "perfectly normal beast",
           "peril sensitive sunglasses", "prefect, ford",
           "ravenous bugblatter beast of traal", 
           "silastic armorfiends of striterax",
@@ -100,14 +117,26 @@ function hitchhikerArray()
           "zarquon" ];
 }
 
-//next two functions  borrowed from jquery ui 
-// https://jqueryui.com/autocomplete/#multiple
-function split(val)
+function buildWikiResult(title, snippet)
 {
-  return val.split(/,\s*/);
-}
+  var wikiUrl = "https://en.wikipedia.org/wiki/";
+  var formattedTitle = title.replace(/\s/gi, "_");
+  var newAnchor = document.createElement("a");
+  var newHeader = document.createElement("h4");
+  var newPara = document.createElement("p");
+  var currentDiv = $("#results");
+  var strippedSnippet = snippet.replace(/(<([^>]+)>)/ig, " "); 
+  strippedSnippet += "...";
+  /*var target = document.createAttribute("target");
+  target.value = "_blank";*/
 
-function extractLast(term)
-{
-  return split(term).pop();
+  snippetNode = document.createTextNode(strippedSnippet);
+  titleNode = document.createTextNode(title);
+  newHeader.appendChild(titleNode);
+  newPara.appendChild(snippetNode);
+  newAnchor.href = wikiUrl + formattedTitle;
+  newAnchor.setAttribute("target", "_blank");
+  newAnchor.appendChild(newHeader);
+  newAnchor.appendChild(newPara);
+  currentDiv.append(newAnchor);
 }

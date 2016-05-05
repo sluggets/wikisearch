@@ -6,12 +6,12 @@ $(document).ready(function() {
   });
 
   // variable to hold search value
-  var nvalue;
+  var searchValue;
 
   // tracks search entry by key,
   // adds to search value
   $("input").keyup(function() {
-    nvalue = $(this).val();
+    searchValue = $(this).val();
   }).keyup();
 
   // uses function to load up array of string
@@ -24,7 +24,7 @@ $(document).ready(function() {
   $("#search-box").autocomplete({
     source: hitchTerms,
     select: function (event, ui) {
-      nvalue = ui.item.value;
+      searchValue = ui.item.value;
     }
   });
 
@@ -50,14 +50,14 @@ $(document).ready(function() {
     // if search is made with empty input, navigate
     // to random wikipedia article page, otherwise
     // clean up string submitted by user to make search
-    if (nvalue == "")
+    if (searchValue == "")
     {
       window.location.href = 'https://en.wikipedia.org/wiki/Special:Random';
     }
     else
     {
-      nvalue = nvalue.trim();
-      nvalue = nvalue.replace(/[^\w\s()]/gi, '');
+      searchValue = searchValue.trim();
+      searchValue = searchValue.replace(/[^\w\s()]/gi, '');
     }
 
     // makes the api request with user's search string
@@ -69,7 +69,7 @@ $(document).ready(function() {
         action: "query",
         format: "json",
         list:   "search",
-        srsearch: nvalue,
+        srsearch: searchValue,
         srlimit: "5",
         srnamespace: "0",
         srprop:  "snippet" 

@@ -1,6 +1,18 @@
+body
+{
+  background-color: #d9dfe8;
+  font-family: 'Nunito', sans-serif;
+}
+
+.list-group-item
+{
+  background-color: #eefbea;
+}
+
 .search
 {
   display: none;
+  font-family: 'Nunito', sans-serif;
 }
 
 #guide
@@ -29,5 +41,8 @@ img:hover
   visibility: visible;
 }
 
-
+.search
+{
+  margin-bottom: 2em;
+}
 

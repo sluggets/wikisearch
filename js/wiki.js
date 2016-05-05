@@ -1,40 +1,55 @@
 $(document).ready(function() {
-  //var value;
+  // fades out book image, fades in search box
   $("#guide").click(function() {
     $(".search").toggle("fade");
     $(this).css("visibility", "hidden");
   });
 
+  // variable to hold search value
   var nvalue;
+
+  // tracks search entry by key,
+  // adds to search value
   $("input").keyup(function() {
     nvalue = $(this).val();
   }).keyup();
-  console.log("nvalue: " + nvalue);
+
+  // uses function to load up array of string
+  // values for Hitchhiker's Guide-centric
+  // autocomplete
   var hitchTerms = hitchhikerArray();
-  var vals;
+
+  // implements autocomplete to search box
+  // adds autocomplete value to search value
   $("#search-box").autocomplete({
     source: hitchTerms,
     select: function (event, ui) {
-      console.log(ui.item.value);
       nvalue = ui.item.value;
-      
     }
   });
 
  
+  // After clicking "enter", many things happen
   $("button").click(function() {
+    // removes book image from page, so that the
+    // search box slides up, making room for search results
     var guideNode = document.getElementById("guide"); 
     if (guideNode && guideNode.parentNode)
     {
       guideNode.parentNode.removeChild(guideNode);    
     }
   
+    // if there are results currently displayed, and
+    // and another search is made, removes old search results
     var resultsNode = document.getElementById("results");
     while(resultsNode.firstChild)
     {
       resultsNode.removeChild(resultsNode.firstChild);
     }
     
+    // if search is made with empty input, navigate
+    // to random wikipedia article page, otherwise
+    // clean up string submitted by user to make search
     if (nvalue == "")
     {
       window.location.href = 'https://en.wikipedia.org/wiki/Special:Random';
@@ -44,7 +59,8 @@ $(document).ready(function() {
       nvalue = nvalue.trim();
       nvalue = nvalue.replace(/[^\w\s()]/gi, '');
     }
-    console.log("nvalue on buttton: " + nvalue);
+
+    // makes the api request with user's search string
     $.ajax( {
       url: "https://en.wikipedia.org/w/api.php",
       jsonp: "callback",
@@ -60,25 +76,30 @@ $(document).ready(function() {
       },
       xhrFields: { withCredentials: true},
       success: function(response) {
-        //$(".results").html(JSON.stringify(response));
-        var wjarr = response["query"]["search"];
+        // grabs search result object
+        var wikiArray = response["query"]["search"];
+
+        // variables to hold article title
+        // and article snippet
         var wikiTitle;
         var wikiSnippet;
-        wjarr.forEach(function(val) {
+
+        // loops through to grab title and
+        // snippet for each search result
+        wikiArray.forEach(function(val) {
           var keys = Object.keys(val);
           keys.forEach(function(key) {
             if (key == "title")
             {
-              //console.log(val[key] + "\n"); 
               wikiTitle = val[key];
             }
             else if (key == "snippet")
             {
-              //console.log(val[key] + "\n");
               wikiSnippet = val[key];
             }
           });
           
+          // builds and adds to DOM search results
           buildWikiResult(wikiTitle, wikiSnippet);
 });
       }
@@ -90,6 +111,8 @@ $(document).ready(function() {
   
 });
 
+// simple function to return array of HGTTG themed
+// autocomplete values
 function hitchhikerArray()
 {
   return ["42 (number)", "adams douglas", "arthur dent",
@@ -117,26 +140,57 @@ function hitchhikerArray()
           "zarquon" ];
 }
 
+// builds and adds to DOM search results
 function buildWikiResult(title, snippet)
 {
+  // first part of wiki article link url
   var wikiUrl = "https://en.wikipedia.org/wiki/";
-  var formattedTitle = title.replace(/\s/gi, "_");
-  var newAnchor = document.createElement("a");
-  var newHeader = document.createElement("h4");
-  var newPara = document.createElement("p");
-  var currentDiv = $("#results");
-  var strippedSnippet = snippet.replace(/(<([^>]+)>)/ig, " "); 
-  strippedSnippet += "...";
-  /*var target = document.createAttribute("target");
-  target.value = "_blank";*/
 
+  // create a formatted title with underscores to
+  // add to wikiURL, thus creating a valid wikipedia
+  // article url
+  var formattedTitle = title.replace(/\s/gi, "_");
+
+  // creates <a> html tag to link to wikipedia article
+  // from results
+  var newAnchor = document.createElement("a");
+
+  // creates <h4> html tag to hold the Wiki title
+  var newHeader = document.createElement("h4");
+
+  // creates <p> html tag to hold the wiki snippet
+  var newPara = document.createElement("p");
+
+  // grab results <div> to append new result anchor later
+  var currentDiv = $("#results");
+
+  // mediawiki returns snippet strings full of <span> elements
+  // for some reason. This strips them out to display clean
+  // snippet
+  var strippedSnippet = snippet.replace(/(<([^>]+)>)/ig, " "); 
+  var strippedSnippet = strippedSnippet.replace(/(&quot;)/ig, "\"");
+
+  // mediawiki snippets end abruptly, presentation looks
+  // like an error. This adds ellipses to communicate the
+  // snippet is to be continued if you follow the link
+  strippedSnippet += "...";
+
+  // creates and assembles all the html elements
   snippetNode = document.createTextNode(strippedSnippet);
   titleNode = document.createTextNode(title);
   newHeader.appendChild(titleNode);
   newPara.appendChild(snippetNode);
+
+  // sets href to proper wikipedia article url
   newAnchor.href = wikiUrl + formattedTitle;
+
+  // makes the links open in new page
   newAnchor.setAttribute("target", "_blank");
+
+  // build the <a> link with all nested content
   newAnchor.appendChild(newHeader);
   newAnchor.appendChild(newPara);
+
+  // add it all to the DOM !!
   currentDiv.append(newAnchor);
 }
